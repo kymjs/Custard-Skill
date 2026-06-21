@@ -8,7 +8,8 @@
 | custard-tool | HTTP | Body |
 |--------------|------|------|
 | `get_screen` | `GET /screen` | — |
-| `get_screen --screenshot` | `GET /screen?screenshot=1` | —（超时 90s） |
+| `get_screen --screenshot` | `GET /screen` + `GET /screen.jpg` | stdout JSON 含 `screenshot_path`（默认不含 base64） |
+| `get_screen --screenshot --inline` | 同上 | JSON 额外含 `screenshot_base64` |
 | `list_apps` | `GET /tool/list_installed_apps` | — |
 | `open_app <名>` | `POST /tool/open_app` | `{"package_or_name":"..."}` |
 | `tap X Y [action]` | `POST /tool/tap_screen` | `{"x_percent":X,"y_percent":Y,"action":"tap"}` |
@@ -44,7 +45,15 @@ Skill（`source=agent`）→ 检查 **MCP** 类：`mcp.get_screen`、`mcp.tap_sc
 
 ## 截图说明
 
-`--screenshot` 返回 JSON 内 `screenshot_base64`，体积大；终端 Agent 通常**无法直接看图**，仅适合具备视觉能力的模型。优先用 UI 树字段判断状态。
+`get_screen --screenshot` 流程：
+
+1. `GET /screen` — UI 文本与元数据（无 base64）
+2. `GET /screen.jpg` — JPEG 二进制，脚本写入 `cache/latest-screen.jpg`
+3. stdout 输出合并 JSON，含 `screenshot_path` 与 `has_screenshot: true`
+
+**外部 Agent 应使用 Read 工具读取 `screenshot_path` 图片**（Cursor、Claude Code 等支持视觉的 Agent 均可）。`--inline` 可选地在 JSON 附带 base64，一般不必使用。
+
+HTTP 亦可直接：`GET /screen?format=jpeg` 或 `GET /screen.jpg` 返回纯 JPEG。
 
 ## 限制
 
