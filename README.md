@@ -1,3 +1,6 @@
+[![OSL](https://cdn.kymjs.com:8843/qiniu/image/logo3.png)](https://kymjs.com/)
+=================
+
 # 让 AI 替你操作手机 — Custard 手机控制 Skill
 
 > 一句话：**Custard 把 Android 手机接到 Mac 上，这个 Skill 可以让任何 Agent 能「看见」并「操控」你的 Android 手机。**
